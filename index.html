@@ -1,72 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Metawinners Slot</title>
-  <style>
-    body {
-      margin:0;
-      background:radial-gradient(circle at center,#020024,#090979,#00d4ff);
-      color:white;
-      font-family:Arial, sans-serif;
-      text-align:center;
-      overflow:hidden;
-    }
-    h1 {margin-top:20px;font-size:2.5em;text-shadow:0 0 20px cyan;}
-    #slot {display:flex;justify-content:center;margin:40px auto;}
-    .reel {
-      width:120px;height:120px;margin:0 10px;
-      background:#111;border:4px solid cyan;
-      border-radius:20px;display:flex;align-items:center;justify-content:center;
-      font-size:60px;box-shadow:0 0 20px cyan inset;
-    }
-    button {margin:10px;padding:15px 25px;font-size:1em;border:none;border-radius:8px;background:cyan;color:#000;cursor:pointer;}
-    button:hover {background:#00f0ff;}
-    #result {margin-top:20px;font-size:1.5em;min-height:40px;}
-    #creditDisplay {margin-top:15px;font-size:1.2em;}
-    #leaderboard {margin:30px auto;width:300px;background:rgba(0,0,0,0.5);padding:10px;border-radius:10px;}
-    #leaderboard h2 {margin:0 0 10px;}
-    #lbList {list-style:none;padding:0;margin:0;}
-    #lbList li {margin:5px 0;}
-    #nftUpload {margin-top:15px;}
-    .spinning {animation:spin 0.2s linear infinite;}
-    @keyframes spin { from {transform:rotateX(0deg);} to {transform:rotateX(360deg);} }
-    #nftPreview {display:flex;justify-content:center;margin-top:15px;flex-wrap:wrap;}
-    #nftPreview img {width:60px;margin:5px;border-radius:8px;box-shadow:0 0 10px #0ff;}
-    #confettiCanvas {position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;}
-    .stars {position:fixed;width:2px;height:2px;background:white;opacity:0.8;}
-    footer {margin-top:30px;font-size:1.1em;color:#0ff;text-shadow:0 0 5px #000;}
-  </style>
+<meta charset="utf-8">
+<title>🚀 Metawinners Slot Machine</title>
+<style>
+  body {
+    margin:0; background:radial-gradient(ellipse at center, #0a0014 0%, #000 100%);
+    color:#fff; font-family:'Orbitron', sans-serif; text-align:center; overflow:hidden;
+  }
+  h1 { margin:20px; font-size:2.5em; color:#0ff; text-shadow:0 0 20px #0ff; }
+  .reels { display:flex; justify-content:center; gap:20px; margin:20px; }
+  .reel {
+    width:100px; height:120px; border:3px solid #0ff; border-radius:12px;
+    background:#111; display:flex; align-items:center; justify-content:center;
+    font-size:60px; overflow:hidden; box-shadow:0 0 20px #0ff;
+    transition:box-shadow 0.3s ease-in-out;
+  }
+  .reel img { max-width:80px; max-height:100px; object-fit:contain; }
+  .reel.spinning {
+    animation:glowPulse 1s infinite alternate;
+  }
+  
+@keyframes
+ glowPulse {
+    from { box-shadow:0 0 10px #0ff, 0 0 20px #09f; }
+    to   { box-shadow:0 0 30px #0ff, 0 0 60px #09f; }
+  }
+  button {
+    padding:12px 28px; font-size:18px; margin:10px;
+    background:linear-gradient(90deg,#0ff,#09f);
+    color:#000; border:0; border-radius:10px; cursor:pointer;
+    box-shadow:0 0 15px #0ff; transition:transform 0.1s;
+  }
+  button:active { transform:scale(0.95); }
+  #result { margin:20px; font-size:24px; text-shadow:0 0 12px #fff; }
+  #credits { font-size:20px; margin:10px; }
+  #leaderboard {
+    margin:20px auto; width:320px; background:rgba(0,255,255,0.1);
+    border:1px solid #0ff; border-radius:12px; padding:10px; text-align:left;
+  }
+  #leaderboard h2 { text-align:center; color:#0ff; font-size:1.2em; }
+  .stars { position:fixed; width:2px; height:2px; background:#0ff; animation:twinkle 5s infinite; opacity:0.8; }
+  
+@keyframes
+ twinkle { 0%,100%{opacity:0.2;} 50%{opacity:1;} }
+  #uploads { margin:20px; }
+  #controls { margin:10px; }
+  canvas#confettiCanvas {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events:none; z-index:9999;
+  }
+</style>
 </head>
 <body>
   <h1>🚀 Metawinners Slot 🚀</h1>
-  <div id="slot">
-    <div class="reel" id="r0">🎰</div>
-    <div class="reel" id="r1">🎰</div>
-    <div class="reel" id="r2">🎰</div>
+  <div id="credits">Credits: <span id="creditValue">100</span></div>
+  <div class="reels">
+    <div class="reel" id="r0">🍒</div>
+    <div class="reel" id="r1">💎</div>
+    <div class="reel" id="r2">7️⃣</div>
   </div>
-  <button id="spin">SPIN 🎲</button>
+  <div id="controls">
+    <button id="spin">SPIN</button>
+    <button id="addCredit">+10 Credits</button>
+    <button id="mute">🔊 Sound</button>
+  </div>
   <div id="result"></div>
-  <div id="creditDisplay">Credits: <span id="creditValue">100</span></div>
-  <button id="addCredit">+ Add 10 Credits</button>
-  <button id="mute">🔊 Sound</button>
+
+  <div id="uploads">
+    <input type="file" id="nftUpload" accept="image/*" multiple>
+    <p>Upload your MetaWinners NFT images to appear on the reels</p>
+    <div id="nftPreview"></div>
+  </div>
 
   <div id="leaderboard">
     <h2>🏆 Leaderboard</h2>
     <ul id="lbList"></ul>
   </div>
 
-  <div>
-    <h3>Upload your Metawinners NFTs (images)</h3>
-    <input type="file" id="nftUpload" multiple accept="image/*">
-    <div id="nftPreview"></div>
-  </div>
-
+  <!-- Confetti canvas -->
   <canvas id="confettiCanvas"></canvas>
-  <footer>Had fun? 👉 Come and play on <strong>MetaWin</strong></footer>
 
 <script>
-// --- Full JS logic here (same as previous message) ---
 let emojiSymbols = ["🍒","💎","7️⃣","⭐","🎲","🛸","🚀","👾"];
 let nftSymbols = JSON.parse(localStorage.getItem("mw_nfts")||"[]");
 let reels = [document.getElementById("r0"), document.getElementById("r1"), document.getElementById("r2")];
@@ -76,12 +91,17 @@ let credits = parseInt(localStorage.getItem("mw_credits")||"100");
 let leaderboard = JSON.parse(localStorage.getItem("mw_lb")||"[]");
 let muted = false;
 
+// preload sounds
 const spinSound = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
 const winSound = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
 const jackpotSound = new Audio("https://actions.google.com/sounds/v1/ambiences/magic_chime.ogg");
 
-function playSound(sound){ if(!muted){ sound.currentTime=0; sound.play(); } }
-function updateCredits() { creditValue.textContent = credits; localStorage.setItem("mw_credits", credits); }
+function playSound(sound){ if(!muted){ sound.currentTime=0; http://sound.play(); } }
+
+function updateCredits() {
+  creditValue.textContent = credits;
+  localStorage.setItem("mw_credits", credits);
+}
 function saveScore(username, score) {
   leaderboard.push({name:username, score});
   leaderboard.sort((a,b)=>b.score-a.score);
@@ -90,10 +110,11 @@ function saveScore(username, score) {
   renderLB();
 }
 function renderLB(){
-  const ul=document.getElementById("lbList"); ul.innerHTML="";
+  const ul=document.getElementById("lbList");
+  ul.innerHTML="";
   leaderboard.forEach(e=>{
     const li=document.createElement("li");
-    li.textContent = `${e.name}: ${e.score}`;
+    li.textContent = `${http://e.name}: ${e.score}`;
     ul.appendChild(li);
   });
 }
@@ -102,7 +123,7 @@ function renderNFTs(){
   preview.innerHTML="";
   nftSymbols.forEach(src=>{
     let img=document.createElement("img");
-    img.src=src; img.style.width="60px"; img.style.margin="5px";
+    img.src=src; http://img.style.width="60px"; http://img.style.margin="5px";
     preview.appendChild(img);
   });
 }
@@ -116,20 +137,28 @@ function displaySymbol(reel, sym){
     let img=document.createElement("img");
     img.src=sym;
     reel.appendChild(img);
-  } else { reel.textContent=sym; }
+  } else {
+    reel.textContent=sym;
+  }
 }
 function spin(){
   if (credits<=0){ result.textContent="No credits left!"; return; }
   credits--; updateCredits();
   playSound(spinSound);
+
   reels.forEach(r=>r.classList.add("spinning"));
+
   let outcome=[];
   reels.forEach((reel,i)=>{
     let count=15; let frame=0;
     const interval=setInterval(()=>{
-      let sym=getRandomSymbol(); displaySymbol(reel,sym); frame++;
+      let sym=getRandomSymbol();
+      displaySymbol(reel,sym);
+      frame++;
       if(frame>=count){
-        clearInterval(interval); outcome[i]=sym; reel.classList.remove("spinning");
+        clearInterval(interval);
+        outcome[i]=sym;
+        reel.classList.remove("spinning");
         if(i===reels.length-1) checkWin(outcome);
       }
     },100+50*i);
@@ -138,17 +167,26 @@ function spin(){
 function checkWin(outcome){
   if(outcome[0]===outcome[1] && outcome[1]===outcome[2]){
     result.textContent="✨ JACKPOT! ✨ +50 credits";
-    credits+=50; playSound(jackpotSound); launchConfetti();
+    credits+=50;
+    playSound(jackpotSound);
+    launchConfetti();
     const user=prompt("Enter your username for the leaderboard:","Anon"); 
     if(user) saveScore(user,credits);
   } else if(outcome[0]===outcome[1]||outcome[1]===outcome[2]||outcome[0]===outcome[2]){
-    result.textContent="⭐ Pair win! +10 credits"; credits+=10; playSound(winSound);
-  } else { result.textContent="Try again."; }
+    result.textContent="⭐ Pair win! +10 credits";
+    credits+=10;
+    playSound(winSound);
+  } else {
+    result.textContent="Try again."; 
+  }
   updateCredits();
 }
 document.getElementById("spin").addEventListener("click",spin);
 document.getElementById("addCredit").addEventListener("click",()=>{credits+=10;updateCredits();});
-document.getElementById("mute").addEventListener("click",()=>{ muted=!muted; document.getElementById("mute").textContent = muted ? "🔇 Muted" : "🔊 Sound"; });
+document.getElementById("mute").addEventListener("click",()=>{
+  muted=!muted;
+  document.getElementById("mute").textContent = muted ? "🔇 Muted" : "🔊 Sound";
+});
 document.getElementById("nftUpload").addEventListener("change",e=>{
   [...e.target.files].forEach(file=>{
     const reader=new FileReader();
@@ -156,16 +194,52 @@ document.getElementById("nftUpload").addEventListener("change",e=>{
     reader.readAsDataURL(file);
   });
 });
+
 updateCredits(); renderLB(); renderNFTs();
-for(let i=0;i<120;i++){let s=document.createElement('div');s.className='stars';s.style.left=Math.random()*100+'vw';s.style.top=Math.random()*100+'vh';document.body.appendChild(s);}
-const canvas=document.getElementById("confettiCanvas"); const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth; canvas.height=window.innerHeight; let confettiParticles=[];
-function ConfettiPiece(){ this.x=Math.random()*canvas.width; this.y=Math.random()*-20; this.color=`hsl(${Math.random()*360},100%,50%)`; this.size=5+Math.random()*8; this.speed=2+Math.random()*5; this.angle=Math.random()*2*Math.PI; this.spin=0.05+Math.random()*0.05; }
-ConfettiPiece.prototype.update=function(){ this.y+=this.speed; this.angle+=this.spin; if(this.y>canvas.height) this.y=-10; }
-ConfettiPiece.prototype.draw=function(){ ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.angle); ctx.fillStyle=this.color; ctx.fillRect(-this.size/2,-this.size/2,this.size,this.size); ctx.restore(); }
-function launchConfetti(){ confettiParticles=[]; for(let i=0;i<200;i++){ confettiParticles.push(new ConfettiPiece()); } let duration=3000; let start=Date.now();
-  function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); confettiParticles.forEach(p=>{p.update();p.draw();});
-    if(Date.now()-start<duration) requestAnimationFrame(animate); else ctx.clearRect(0,0,canvas.width,canvas.height); }
+
+// starfield background
+for(let i=0;i<120;i++){let s=document.createElement('div');s.className='stars';http://s.style.left=Math.random()*100+'vw';http://s.style.top=Math.random()*100+'vh';document.body.appendChild(s);}
+
+// CONFETTI SYSTEM
+const canvas=document.getElementById("confettiCanvas");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let confettiParticles=[];
+
+function ConfettiPiece(){
+  this.x=Math.random()*canvas.width;
+  this.y=Math.random()*-20;
+  this.color=`hsl(${Math.random()*360},100%,50%)`;
+  this.size=5+Math.random()*8;
+  this.speed=2+Math.random()*5;
+  this.angle=Math.random()*2*Math.PI;
+  this.spin=0.05+Math.random()*0.05;
+}
+ConfettiPiece.prototype.update=function(){
+  this.y+=this.speed;
+  this.angle+=this.spin;
+  if(this.y>canvas.height) this.y=-10;
+}
+ConfettiPiece.prototype.draw=function(){
+  http://ctx.save();
+  ctx.translate(this.x,this.y);
+  ctx.rotate(this.angle);
+  ctx.fillStyle=this.color;
+  ctx.fillRect(-this.size/2,-this.size/2,this.size,this.size);
+  ctx.restore();
+}
+function launchConfetti(){
+  confettiParticles=[];
+  for(let i=0;i<200;i++){ confettiParticles.push(new ConfettiPiece()); }
+  let duration=3000;
+  let start=http://Date.now();
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    confettiParticles.forEach(p=>{p.update();p.draw();});
+    if(http://Date.now()-start<duration) requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
   animate();
 }
 </script>
