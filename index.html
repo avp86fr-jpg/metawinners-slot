@@ -21,8 +21,7 @@
     animation:glowPulse 1s infinite alternate;
   }
   
-@keyframes
- glowPulse {
+@keyframes glowPulse {
     from { box-shadow:0 0 10px #0ff, 0 0 20px #09f; }
     to   { box-shadow:0 0 30px #0ff, 0 0 60px #09f; }
   }
@@ -42,13 +41,18 @@
   #leaderboard h2 { text-align:center; color:#0ff; font-size:1.2em; }
   .stars { position:fixed; width:2px; height:2px; background:#0ff; animation:twinkle 5s infinite; opacity:0.8; }
   
-@keyframes
- twinkle { 0%,100%{opacity:0.2;} 50%{opacity:1;} }
+@keyframes twinkle { 0%,100%{opacity:0.2;} 50%{opacity:1;} }
   #uploads { margin:20px; }
   #controls { margin:10px; }
   canvas#confettiCanvas {
     position:fixed; top:0; left:0; width:100%; height:100%;
     pointer-events:none; z-index:9999;
+  }
+  #footer {
+    margin:30px 0;
+    font-size:18px;
+    color:#0ff;
+    text-shadow:0 0 12px #0ff;
   }
 </style>
 </head>
@@ -78,6 +82,8 @@
     <ul id="lbList"></ul>
   </div>
 
+  <div id="footer">Had fun? Come and play on <a href="https://MetaWin.com" target="_blank" style="color:#0ff;text-decoration:underline;">MetaWin.com</a></div>
+
   <!-- Confetti canvas -->
   <canvas id="confettiCanvas"></canvas>
 
@@ -96,7 +102,7 @@ const spinSound = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_p
 const winSound = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
 const jackpotSound = new Audio("https://actions.google.com/sounds/v1/ambiences/magic_chime.ogg");
 
-function playSound(sound){ if(!muted){ sound.currentTime=0; http://sound.play(); } }
+function playSound(sound){ if(!muted){ sound.currentTime=0; sound.play(); } }
 
 function updateCredits() {
   creditValue.textContent = credits;
@@ -114,7 +120,7 @@ function renderLB(){
   ul.innerHTML="";
   leaderboard.forEach(e=>{
     const li=document.createElement("li");
-    li.textContent = `${http://e.name}: ${e.score}`;
+    li.textContent = `${e.name}: ${e.score}`;
     ul.appendChild(li);
   });
 }
@@ -123,7 +129,9 @@ function renderNFTs(){
   preview.innerHTML="";
   nftSymbols.forEach(src=>{
     let img=document.createElement("img");
-    img.src=src; http://img.style.width="60px"; http://img.style.margin="5px";
+    img.src=src;
+    img.style.width="60px";
+    img.style.margin="5px";
     preview.appendChild(img);
   });
 }
@@ -198,7 +206,13 @@ document.getElementById("nftUpload").addEventListener("change",e=>{
 updateCredits(); renderLB(); renderNFTs();
 
 // starfield background
-for(let i=0;i<120;i++){let s=document.createElement('div');s.className='stars';http://s.style.left=Math.random()*100+'vw';http://s.style.top=Math.random()*100+'vh';document.body.appendChild(s);}
+for(let i=0;i<120;i++){
+  let s=document.createElement('div');
+  s.className='stars';
+  s.style.left=Math.random()*100+'vw';
+  s.style.top=Math.random()*100+'vh';
+  document.body.appendChild(s);
+}
 
 // CONFETTI SYSTEM
 const canvas=document.getElementById("confettiCanvas");
@@ -222,7 +236,7 @@ ConfettiPiece.prototype.update=function(){
   if(this.y>canvas.height) this.y=-10;
 }
 ConfettiPiece.prototype.draw=function(){
-  http://ctx.save();
+  ctx.save();
   ctx.translate(this.x,this.y);
   ctx.rotate(this.angle);
   ctx.fillStyle=this.color;
@@ -233,11 +247,11 @@ function launchConfetti(){
   confettiParticles=[];
   for(let i=0;i<200;i++){ confettiParticles.push(new ConfettiPiece()); }
   let duration=3000;
-  let start=http://Date.now();
+  let start=Date.now();
   function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     confettiParticles.forEach(p=>{p.update();p.draw();});
-    if(http://Date.now()-start<duration) requestAnimationFrame(animate);
+    if(Date.now()-start<duration) requestAnimationFrame(animate);
     else ctx.clearRect(0,0,canvas.width,canvas.height);
   }
   animate();
