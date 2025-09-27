@@ -23,7 +23,7 @@
     overflow:hidden;
   }
 
-  /* subtle animated background texture */
+  /* animated star background */
   body::before{
     content:"";
     position:fixed; inset:0; z-index:-2;
@@ -59,22 +59,18 @@
     color:#010202; box-shadow:0 0 30px rgba(0,255,255,0.15);
   }
 
-  /* Main header + credits */
   header{ padding:18px 12px 4px 12px; display:flex; align-items:center; justify-content:center; gap:20px; flex-wrap:wrap; }
   header h1{ margin:0; font-size:clamp(1.6rem,4vw,2.6rem); color:var(--neon-a); text-shadow:0 0 18px rgba(0,255,255,0.25);}
   #credits{ color:#dff; font-size:clamp(0.9rem,1.8vw,1.1rem); margin-top:6px; background:rgba(0,255,255,0.02); padding:6px 10px; border-radius:10px; border:1px solid rgba(0,255,255,0.06); }
 
-  /* Reels container - responsive and large */
   .reel-wrap{
     display:flex; gap:clamp(16px,4vw,48px);
     justify-content:center; align-items:center;
     padding:20px; margin:8px;
     border-radius:20px;
     max-width:1200px; margin-left:auto; margin-right:auto;
-    box-sizing:border-box;
     animation: framePulse 4s ease-in-out infinite alternate;
     border:3px solid rgba(0,255,255,0.05);
-    backdrop-filter: blur(4px);
   }
   @keyframes framePulse{
     from{ box-shadow:0 0 28px rgba(0,255,255,0.06), inset 0 0 18px rgba(0,150,255,0.02); }
@@ -94,11 +90,10 @@
     box-shadow:0 10px 40px rgba(0,0,0,0.6), 0 0 40px rgba(0,255,255,0.04);
     transition:transform .18s ease, box-shadow .18s ease;
   }
-  .reel img{ max-width:88%; max-height:88%; object-fit:contain; display:block; pointer-events:none; user-select:none; filter: drop-shadow(0 6px 20px rgba(0,255,255,0.06)); }
-  .reel.spinning{ transform: translateY(-4px); box-shadow: 0 20px 80px rgba(0,255,255,0.12); animation: reelGlow 0.9s infinite alternate; }
+  .reel img{ max-width:88%; max-height:88%; object-fit:contain; }
+  .reel.spinning{ transform: translateY(-4px); animation: reelGlow 0.9s infinite alternate; }
   @keyframes reelGlow{ from{ box-shadow:0 20px 40px rgba(0,255,255,0.06);} to{ box-shadow:0 30px 120px rgba(0,150,255,0.15);} }
 
-  /* Controls */
   #controls{ display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:12px; }
   .btn{
     cursor:pointer; border-radius:12px; border:0; padding:12px 22px; font-size:1rem;
@@ -107,177 +102,127 @@
   }
   .btn:active{ transform:scale(.97); }
 
-  #result{ margin-top:14px; min-height:1.2em; font-size:clamp(1rem,2vw,1.4rem); color:#eaffff; text-shadow:0 0 14px rgba(255,255,255,0.05); }
+  #result{ margin-top:14px; min-height:1.2em; font-size:clamp(1rem,2vw,1.4rem); color:#eaffff; }
 
-  /* Upload area */
   #uploads{ margin:16px auto; max-width:760px; padding:10px; color:#cfe; text-align:center; }
   #nftPreview{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
   #nftPreview img{ width:72px; height:72px; object-fit:cover; border-radius:10px; border:2px solid rgba(0,255,255,0.06); }
 
-  /* leaderboard + footer */
   #leaderboard{ margin:18px auto; max-width:360px; background:rgba(0,255,255,0.02); padding:10px; border-radius:12px; border:1px solid rgba(0,255,255,0.04); color:#dff; }
   #leaderboard h2{ color:var(--neon-a); margin:6px 0 10px; font-size:1.1rem; }
+
   footer{ margin:24px 0 48px; color:var(--neon-a); font-size:0.95rem; }
-
-  /* Confetti canvas sits on top */
   canvas#confettiCanvas{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:9998; }
-
-  /* Responsive tweaks */
-  @media (max-width:780px){
-    .reel{ max-width:120px; font-size:clamp(2.4rem,12vw,4.2rem); border-radius:12px; }
-    .reel-wrap{ gap:10px; padding:12px; }
-    #splash .title{ font-size:clamp(1.8rem,8vw,3rem); }
-  }
 </style>
 </head>
 <body>
-  <!-- SPLASH -->
-  <div id="splash" aria-hidden="false">
+  <div id="splash">
     <div class="title">🚀 MetaWin — Epic Slots</div>
-    <div class="sub">Huge reels. Upload your MetaWinners NFTs. Win big. Ready?</div>
+    <div class="sub">Huge reels. Upload NFTs. Win big.</div>
     <button id="enterGame">Enter Game</button>
   </div>
 
-  <!-- HEADER -->
   <header>
     <h1>🚀 Metawinners Slot</h1>
     <div id="credits">Credits: <strong id="creditValue">100</strong></div>
   </header>
 
-  <!-- REELS -->
   <main>
-    <div class="reel-wrap" role="region" aria-label="Slot reels">
-      <div class="reel" id="r0" aria-live="polite">🍒</div>
-      <div class="reel" id="r1" aria-live="polite">💎</div>
-      <div class="reel" id="r2" aria-live="polite">7️⃣</div>
+    <div class="reel-wrap">
+      <div class="reel" id="r0">🍒</div>
+      <div class="reel" id="r1">💎</div>
+      <div class="reel" id="r2">7️⃣</div>
     </div>
 
-    <!-- CONTROLS -->
-    <div id="controls" role="toolbar" aria-label="Controls">
+    <div id="controls">
       <button class="btn" id="spin">SPIN</button>
       <button class="btn" id="addCredit">+10 Credits</button>
       <button class="btn" id="mute">🔊 Sound</button>
     </div>
 
-    <div id="result" aria-live="polite"></div>
+    <div id="result"></div>
 
-    <!-- UPLOADS -->
     <div id="uploads">
       <input id="nftUpload" type="file" accept="image/*" multiple />
-      <p>Upload your MetaWinners NFT images to include them on the reels. They'll be available as symbols instantly.</p>
-      <div id="nftPreview" aria-hidden="false"></div>
+      <p>Upload your NFTs to include them on the reels.</p>
+      <div id="nftPreview"></div>
     </div>
 
-    <!-- LEADERBOARD -->
-    <div id="leaderboard" role="region" aria-label="Leaderboard">
+    <div id="leaderboard">
       <h2>🏆 Leaderboard</h2>
-      <ul id="lbList">
-        <li>Top Player — 999</li>
-        <li>PlayerTwo — 750</li>
-      </ul>
+      <ul id="lbList"></ul>
     </div>
   </main>
 
   <canvas id="confettiCanvas"></canvas>
 
-  <footer>Had fun? 💫 Come and play on <a href="https://metawin.com" target="_blank" rel="noopener noreferrer">MetaWin</a></footer>
+  <footer>💫 Play more at <a href="https://metawin.com" target="_blank">MetaWin</a></footer>
 
 <script>
 /* -------------------------
-   Core data & DOM refs
-   ------------------------- */
+   Symbols and state
+------------------------- */
 const emojiSymbols = ["🍒","💎","7️⃣","🍀","⭐","🍊","💰"];
 let combinedSymbols = emojiSymbols.map(s => ({type:'emoji', v:s}));
-let uploadedImages = []; // {type:'img', v: dataURL}
-
 let credits = 100;
 let muted = false;
 const reels = [document.getElementById('r0'), document.getElementById('r1'), document.getElementById('r2')];
 const creditEl = document.getElementById('creditValue');
 const resultEl = document.getElementById('result');
-const nftPreview = document.getElementById('nftPreview');
-const confettiCanvas = document.getElementById('confettiCanvas');
-const ctx = confettiCanvas.getContext && confettiCanvas.getContext('2d');
 
 /* -------------------------
-   Sound helper
-   ------------------------- */
-function playSound(src){
-  if(muted) return;
-  try{
-    const a = new Audio(src);
-    a.volume = 0.9;
-    a.play().catch(()=>{/* autoplay blocked on some browsers until interaction */});
-  }catch(e){}
+   Fixed Sound System
+------------------------- */
+let audioCtx;
+let buffers = {};
+const soundFiles = {
+  spin: "https://assets.mixkit.co/sfx/preview/mixkit-casino-slot-machine-spinning-1935.mp3",
+  win: "https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"
+};
+async function loadSound(name, url){
+  const res = await fetch(url);
+  const buf = await res.arrayBuffer();
+  buffers[name] = await audioCtx.decodeAudioData(buf);
 }
-
-/* -------------------------
-   Upload NFT images
-   ------------------------- */
-document.getElementById('nftUpload').addEventListener('change', async (ev) => {
-  const files = Array.from(ev.target.files || []);
-  if(!files.length) return;
-  // read each as data URL
-  for(const f of files.slice(0,12)){ // limit to 12 to avoid huge memory
-    if(!f.type.startsWith('image/')) continue;
-    const data = await fileToDataURL(f);
-    combinedSymbols.push({type:'img', v:data});
-    uploadedImages.push({type:'img', v:data});
-    const img = document.createElement('img');
-    img.src = data;
-    img.alt = f.name || 'NFT';
-    nftPreview.appendChild(img);
-  }
-  resultEl.textContent = 'Uploaded ' + files.length + ' image(s). They are now on the reels!';
-});
-
-function fileToDataURL(file){
-  return new Promise((res,rej)=>{
-    const r = new FileReader();
-    r.onload = ()=>res(r.result);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
-
-/* -------------------------
-   Reel spin logic
-   ------------------------- */
-function setReelContent(reel, token){
-  if(token.type === 'img'){
-    reel.innerHTML = '<img src="'+token.v+'" alt="symbol">';
-  } else {
-    reel.textContent = token.v;
+async function initAudio(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    await Promise.all(Object.entries(soundFiles).map(([n,u])=>loadSound(n,u)));
   }
 }
-
-function randomToken(){
-  // pick uniformly from combinedSymbols (emoji + uploaded images)
-  const i = Math.floor(Math.random()*combinedSymbols.length);
-  return combinedSymbols[i];
+function playSound(name){
+  if(muted || !buffers[name]) return;
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffers[name];
+  src.connect(audioCtx.destination);
+  src.start(0);
 }
+["click","keydown","touchstart"].forEach(evt =>
+  window.addEventListener(evt, ()=>initAudio(), { once:true })
+);
 
-function spinReelAnimated(reel, finalToken, totalSteps=28, baseInterval=60){
-  reel.classList.add('spinning');
-  let step = 0;
-  let last = null;
+/* -------------------------
+   Reel Logic
+------------------------- */
+function setReel(reel, token){
+  reel.innerHTML = token.type==='img' ? `<img src="${token.v}">` : token.v;
+}
+function randomToken(){ return combinedSymbols[Math.floor(Math.random()*combinedSymbols.length)]; }
+function spinReel(reel, final, steps=25){
   return new Promise(resolve=>{
+    let i=0;
+    reel.classList.add('spinning');
     function tick(){
-      // show a fast cycling symbol while spinning
-      const token = randomToken();
-      setReelContent(reel, token);
-      step++;
-      if(step >= totalSteps){
-        // final slow stop with finalToken
+      setReel(reel, randomToken());
+      i++;
+      if(i>=steps){
         setTimeout(()=>{
-          setReelContent(reel, finalToken);
+          setReel(reel, final);
           reel.classList.remove('spinning');
-          resolve(finalToken);
-        }, baseInterval * 6); // small pause for dramatic stop
-      }else{
-        // progressive slow-down: increase interval slightly
-        const delay = baseInterval + Math.floor(step * (baseInterval * 0.9 / totalSteps));
-        setTimeout(tick, delay);
+          resolve(final);
+        },200);
+      } else {
+        setTimeout(tick,60 + i*2);
       }
     }
     tick();
@@ -285,148 +230,70 @@ function spinReelAnimated(reel, finalToken, totalSteps=28, baseInterval=60){
 }
 
 /* -------------------------
-   Game actions
-   ------------------------- */
+   Game Actions
+------------------------- */
 async function spin(){
-  if(credits <= 0){
-    resultEl.textContent = 'No credits left — add more!';
-    return;
-  }
-  credits--; creditEl.textContent = credits;
-  resultEl.textContent = 'Spinning...';
-  playSound('https://assets.mixkit.co/sfx/preview/mixkit-casino-slot-machine-spinning-1935.mp3');
+  if(credits<=0){ resultEl.textContent="No credits left!"; return; }
+  credits--; creditEl.textContent=credits;
+  resultEl.textContent="Spinning...";
+  playSound("spin");
 
-  // choose final tokens for each reel first (so result is fair)
-  const finals = [randomToken(), randomToken(), randomToken()];
-  // vary steps for each reel for staggered stop
-  const p0 = spinReelAnimated(reels[0], finals[0], 26, 60);
-  const p1 = spinReelAnimated(reels[1], finals[1], 31, 60);
-  const p2 = spinReelAnimated(reels[2], finals[2], 36, 60);
+  const finals = [randomToken(),randomToken(),randomToken()];
+  const [r0,r1,r2] = await Promise.all([
+    spinReel(reels[0], finals[0], 25),
+    spinReel(reels[1], finals[1], 30),
+    spinReel(reels[2], finals[2], 35)
+  ]);
 
-  const [r0, r1, r2] = await Promise.all([p0,p1,p2]);
-
-  // determine win: if all three textual or images equal by string value
-  const val0 = r0.type + '|' + r0.v;
-  const val1 = r1.type + '|' + r1.v;
-  const val2 = r2.type + '|' + r2.v;
-
-  if(val0 === val1 && val1 === val2){
-    // BIG WIN
-    const reward = 50;
-    credits += reward;
-    creditEl.textContent = credits;
-    resultEl.textContent = '🎉 JACKPOT! You win ' + reward + ' credits!';
-    playSound('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
+  const v0=r0.type+'|'+r0.v, v1=r1.type+'|'+r1.v, v2=r2.type+'|'+r2.v;
+  if(v0===v1 && v1===v2){
+    resultEl.textContent="🎉 JACKPOT! +50 credits!";
+    credits+=50; creditEl.textContent=credits;
+    playSound("win");
     launchConfetti();
-    // update leaderboard (local)
-    addToLeaderboard('You', credits);
   } else {
-    resultEl.textContent = 'Try again!';
+    resultEl.textContent="Try again!";
   }
 }
+document.getElementById("spin").onclick=spin;
+document.getElementById("addCredit").onclick=()=>{credits+=10;creditEl.textContent=credits;};
+document.getElementById("mute").onclick=()=>{muted=!muted;document.getElementById("mute").textContent=muted?"🔇 Muted":"🔊 Sound";};
 
-document.getElementById('spin').addEventListener('click', spin);
+/* Splash */
+document.getElementById("enterGame").onclick=()=>{document.getElementById("splash").style.display="none";};
 
-/* add credits, mute toggle */
-document.getElementById('addCredit').addEventListener('click', ()=>{
-  credits += 10; creditEl.textContent = credits;
-  resultEl.textContent = '+10 credits added';
-});
-document.getElementById('mute').addEventListener('click', ()=>{
-  muted = !muted;
-  document.getElementById('mute').textContent = muted ? '🔇 Muted' : '🔊 Sound';
-});
-
-/* ENTER splash */
-document.getElementById('enterGame').addEventListener('click', ()=>{
-  const s = document.getElementById('splash');
-  s.style.transition = 'opacity .6s ease';
-  s.style.opacity = '0';
-  setTimeout(()=>{ s.style.display='none'; }, 700);
-  // Safari sometimes blocks audio until interaction; play a tiny silent sound to unlock
-  try{ new Audio().play().catch(()=>{}); }catch(e){}
+/* Upload NFTs */
+document.getElementById("nftUpload").addEventListener("change", async ev=>{
+  const files=[...ev.target.files];
+  for(const f of files){
+    const url=URL.createObjectURL(f);
+    combinedSymbols.push({type:"img", v:url});
+    const img=document.createElement("img"); img.src=url; document.getElementById("nftPreview").appendChild(img);
+  }
 });
 
-/* -------------------------
-   Confetti effect
-   ------------------------- */
+/* Confetti */
 function launchConfetti(){
-  if(!ctx) return;
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
-  const pieces = Array.from({length:160}, () => ({
-    x: Math.random()*confettiCanvas.width,
-    y: Math.random()*confettiCanvas.height - confettiCanvas.height,
-    r: Math.random()*6 + 4,
-    d: Math.random()*6 + 2,
-    color: `hsl(${Math.floor(Math.random()*360)}, 100%, 60%)`,
-    tilt: Math.random()*20 - 10
+  const canvas=document.getElementById("confettiCanvas");
+  const ctx=canvas.getContext("2d");
+  canvas.width=innerWidth; canvas.height=innerHeight;
+  const pieces=Array.from({length:120},()=>({
+    x:Math.random()*canvas.width,y:Math.random()*canvas.height- canvas.height,
+    r:Math.random()*6+4,speed:Math.random()*3+2,
+    color:`hsl(${Math.random()*360},100%,50%)`
   }));
-  let t = 0;
-  function frame(){
-    t++;
-    ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+  let frame=0;
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     for(const p of pieces){
-      p.y += Math.sin((p.d + t) * 0.05) + p.r*0.2 + 2;
-      p.x += Math.cos((p.d + t) * 0.03) * 2;
-      p.tilt += 0.1;
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.tilt * Math.PI/180);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
-      ctx.restore();
-      if(p.y > confettiCanvas.height + 20){ p.y = -40; p.x = Math.random()*confettiCanvas.width; }
+      p.y+=p.speed; if(p.y>canvas.height) p.y=0;
+      ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,p.r,p.r*0.6);
     }
-    if(t < 260) requestAnimationFrame(frame);
-    else ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+    if(frame++<220) requestAnimationFrame(loop);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
   }
-  requestAnimationFrame(frame);
+  loop();
 }
-
-/* -------------------------
-   Leaderboard (simple local)
-   ------------------------- */
-function addToLeaderboard(name, score){
-  try{
-    const ul = document.getElementById('lbList');
-    const li = document.createElement('li');
-    li.textContent = `${name} — ${score}`;
-    ul.insertBefore(li, ul.firstChild);
-    // keep only top 10
-    while(ul.children.length > 10) ul.removeChild(ul.lastChild);
-  }catch(e){}
-}
-
-/* -------------------------
-   Keep canvas sized on resize
-   ------------------------- */
-window.addEventListener('resize', ()=>{
-  if(confettiCanvas) { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
-});
-
-/* -------------------------
-   UX: keyboard space to spin, Enter to use splash
-   ------------------------- */
-window.addEventListener('keydown', (e)=>{
-  if(e.code === 'Space'){ e.preventDefault(); spin(); }
-  if(e.code === 'Enter' && document.getElementById('splash').style.display !== 'none'){
-    document.getElementById('enterGame').click();
-  }
-});
-
-/* -------------------------
-   Initialization: ensure reels are filled with tokens (large)
-   ------------------------- */
-function initReels(){
-  // set a nice big symbol or image for each reel
-  for(let i=0;i<reels.length;i++){
-    const t = randomToken();
-    setReelContent(reels[i], t);
-  }
-}
-initReels();
-
 </script>
 </body>
 </html>
